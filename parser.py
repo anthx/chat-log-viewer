@@ -34,7 +34,8 @@ class Message(object):
         self._sender_name = sender_name
         self._sender_number = sender_number
         self._timestamp = timestamp
-        self.contents = contents
+        self._contents = ""
+        self.contents: str = contents
         Message.message_id += 1
         self._id = Message.message_id
 
@@ -56,11 +57,13 @@ class Message(object):
 
     @property
     def contents(self):
-        return self.__contents
+        return self._contents
 
     @contents.setter
-    def contents(self, contents):
-        self.__contents = contents
+    def contents(self, contents_list):
+        for each in contents_list:
+            self._contents = self._contents + ", " + each
+        # self.__contents = contents
 
     def get_id(self):
         return self._id
@@ -93,7 +96,7 @@ def main():
                     m = Message(line[2], line[3], timestamp, line[4:])
                     viber_chats.add_message(m)
                 except ValueError:
-                    viber_chats.get_most_recently_found_msg().contents += line
+                    viber_chats.get_most_recently_found_msg().contents = line
 
 
                 print(m)
