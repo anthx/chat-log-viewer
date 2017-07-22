@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Logs</title>
+    <style type="text/css">
+    	body {
+    		font-family: 'Arial', 'Helvetica', sans-serif;
+    	}
+    	.message {
+    		/*width: 40%;*/
+			margin: 0;
+			border: black thin solid;
+			border-radius: 5pt;
+			clear: both;
+			padding: 5pt;
+			float: left;
+			max-width: 40%;
+    	}
+    	
+    	.me {
+    		float: right;
+    		text-align: right;
+    		clear: both;
+    	}
+    	
+    	.message p {
+    		margin: 0;
+    	}
+    </style>
+</head>
+<body>
+<h1>Number of messages: {{chat._messages|length}}</h1>
+
+{% for key, msg in chat._messages.items() %}
+    <div class="message {% if msg.get_sender_name() == 'Me' %}me{% endif %}">
+    	<p>{{msg.timestamp.date()}} {{msg.timestamp.time()}}</p>
+        <p>{{msg.contents}}</p>
+    </div>
+{% endfor %}
+</body>
+</html>

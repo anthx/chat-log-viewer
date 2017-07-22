@@ -4,8 +4,15 @@ Parses Chat Logs
 
 import csv, sys, locale, codecs
 from datetime import datetime, date, time
+from jinja2 import Environment, PackageLoader, select_autoescape, exceptions
 
-filename = "Viber_Chats.csv"
+# filename = "Viber_Chats.csv"
+
+env = Environment(
+    loader=PackageLoader('parser', 'templates'),
+    autoescape=select_autoescape(['html', 'xml'])
+)
+
 def datetime_parser(this_date: str, this_time: str, date_mask="dd/mm/yyyy") -> datetime:
     """
     Parses input dates and outputs a datetime object
@@ -33,8 +40,8 @@ class Message(object):
         """
         self._sender_name = sender_name
         self._sender_number = sender_number
-        self._timestamp = timestamp
-        self._contents = ""
+        self.timestamp = timestamp
+        # self._contents = ""
         self.contents: str = contents
         Message.message_id += 1
         self._id = Message.message_id
@@ -45,31 +52,25 @@ class Message(object):
     def get_sender_number(self):
         return self._sender_number
 
-    def get_date(self):
-        pass
-
-    def get_time(self):
-        """
-        Getter method for message time
-        :return: the time the message was sent
-        """
-        pass
+    # @property
+    # def timestamp(self):
+    #     return self._timestamp
 
     @property
     def contents(self):
         return self._contents
 
     @contents.setter
-    def contents(self, contents_list):
-        for each in contents_list:
-            self._contents = self._contents + ", " + each
-        # self.__contents = contents
+    def contents(self, contents):
+        # for each in contents_list:
+        #     self._contents = self._contents + ", " + each
+        self._contents = contents
 
     def get_id(self):
         return self._id
 
     def __repr__(self):
-        return f"@{self._timestamp}, {self._sender_name} said, '{self.contents}'"
+        return f"@{self.timestamp}, {self._sender_name} said, '{self.contents}'"
 
 class ChatLog(object):
     def __init__(self):
@@ -83,27 +84,47 @@ class ChatLog(object):
         highest = sorted(keys)[-1]
         return self._messages[highest]
 
-def main():
-    # filename = argv[1]
+def main(argv):
+    filename = argv[0]
     viber_chats = ChatLog()
     # print(locale.getpreferredencoding())
+    print(filename)
     with codecs.open(filename, "r", encoding='utf-8-sig') as chatfile:
         chat = csv.reader(chatfile, delimiter=",")
         for line in chat:
             if len(line) > 1:
                 try:
                     timestamp = datetime_parser(line[0], line[1])
-                    m = Message(line[2], line[3], timestamp, line[4:])
+                    content = ""
+                    for i, message_fragment in enumerate(line[4:]):
+                        content += message_fragment
+                        if i+1 != len(line[4:]):
+                            content += ", "
+                    m = Message(line[2], line[3], timestamp, content)
                     viber_chats.add_message(m)
                 except ValueError:
-                    viber_chats.get_most_recently_found_msg().contents = line
+                    # this must be a continuation of the previous message
+                    rest_content = "\n"
+                    for i, message_fragment in enumerate(line):
+                        rest_content += message_fragment
+                        if i+1 !=len(line):
+                            rest_content += ", "
+                    viber_chats.get_most_recently_found_msg().contents = rest_content
 
 
-                print(m)
+    try:
+        template = env.get_template("log.html")
+        output = (template.render(chat=viber_chats))
+
+        with open("chat_log.html", 'w') as f:
+            f.write(output)
+    except exceptions.TemplateNotFound:
+        print("Template not found")
+
 
 
 
 
 if __name__  == "__main__":
-    # main(sys.argv[1:])
-    main()
+    main(sys.argv[1:])
+    # main()
