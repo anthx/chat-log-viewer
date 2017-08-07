@@ -4,12 +4,15 @@ Parses Chat Logs
 
 import csv, sys, locale, codecs
 from datetime import datetime, date, time
-from jinja2 import Environment, PackageLoader, select_autoescape, exceptions
+from jinja2 import Environment, BaseLoader, FileSystemLoader, select_autoescape, exceptions
+from dateutil.parser import *
+# from dateutil.tz import *
+from datetime import *
 
 # filename = "Viber_Chats.csv"
 
 env = Environment(
-    loader=PackageLoader('parser', 'templates'),
+    loader=FileSystemLoader('templates'),
     autoescape=select_autoescape(['html', 'xml'])
 )
 
@@ -45,6 +48,14 @@ class Message(object):
         self.contents: str = contents
         Message.message_id += 1
         self._id = Message.message_id
+
+    @property
+    def is_user(self):
+        return self._is_user
+
+    @is_user.setter
+    def is_user(self, flag):
+        self._is_user = flag
 
     def get_sender_name(self):
         return self._sender_name
@@ -84,11 +95,7 @@ class ChatLog(object):
         highest = sorted(keys)[-1]
         return self._messages[highest]
 
-def main(argv):
-    filename = argv[0]
-    viber_chats = ChatLog()
-    # print(locale.getpreferredencoding())
-    print(filename)
+def viber(filename, viber_chats):
     with codecs.open(filename, "r", encoding='utf-8-sig') as chatfile:
         chat = csv.reader(chatfile, delimiter=",")
         for line in chat:
@@ -98,7 +105,7 @@ def main(argv):
                     content = ""
                     for i, message_fragment in enumerate(line[4:]):
                         content += message_fragment
-                        if i+1 != len(line[4:]):
+                        if i + 1 != len(line[4:]):
                             content += ", "
                     m = Message(line[2], line[3], timestamp, content)
                     viber_chats.add_message(m)
@@ -107,17 +114,51 @@ def main(argv):
                     rest_content = "\n"
                     for i, message_fragment in enumerate(line):
                         rest_content += message_fragment
-                        if i+1 !=len(line):
+                        if i + 1 != len(line):
                             rest_content += ", "
                     viber_chats.get_most_recently_found_msg().contents = rest_content
 
+                    return viber_chats
+
+def messenger(filename, messenger_chat):
+    with codecs.open(filename, "r", encoding='ANSI') as chatfile:
+        chat = csv.reader(chatfile, delimiter=",")
+        # the Facebook chatlog parser includes headers.
+        # Maybe I'll parse them later. For now, just skip over the first line
+        next(chatfile)
+        for line in chat:
+            if len(line) > 1:
+                try:
+                    timestamp = parse(line[2])
+                    m = Message(line[1], 0, timestamp, line[3])
+                    messenger_chat.add_message(m)
+                except ValueError:
+                    # this must be a continuation of the previous message
+                    rest_content = "\n"
+                    for i, message_fragment in enumerate(line):
+                        rest_content += message_fragment
+                        if i + 1 != len(line):
+                            rest_content += ", "
+                    messenger_chat.get_most_recently_found_msg().contents = rest_content
+
+
+def main(argv):
+    filename = argv[0]
+    application = argv[1]
+    chat = ChatLog()
+    # print(locale.getpreferredencoding())
+    # print(filename)
+    if application == "viber":
+        viber(filename, chat)
+    if application == "messenger":
+        messenger(filename, chat)
 
     try:
-        template = env.get_template("log.html")
-        output = (template.render(chat=viber_chats))
+        template = env.get_template(f"{application}.html")
+        output = (template.render(chat=chat))
 
-        with open("chat_log.html", 'w') as f:
-            f.write(output)
+        with open("chat_log.html", 'wb') as f:
+            f.write(output.encode("utf-8"))
     except exceptions.TemplateNotFound:
         print("Template not found")
 
