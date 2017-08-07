@@ -161,7 +161,7 @@ def main(argv):
         template = env.get_template(f"{application}.html")
         output = (template.render(chat=chat))
 
-        with open("chat_log.html", 'wb') as f:
+        with open(f"chat_log_{application}.html", 'wb') as f:
             f.write(output.encode("utf-8"))
     except exceptions.TemplateNotFound:
         print("Template not found")
