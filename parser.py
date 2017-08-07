@@ -116,9 +116,8 @@ def viber(filename, viber_chats):
                         rest_content += message_fragment
                         if i + 1 != len(line):
                             rest_content += ", "
-                    viber_chats.get_most_recently_found_msg().contents = rest_content
+                    viber_chats.get_most_recently_found_msg().contents += rest_content
 
-                    return viber_chats
 
 def messenger(filename, messenger_chat):
     with codecs.open(filename, "r", encoding='ANSI') as chatfile:
