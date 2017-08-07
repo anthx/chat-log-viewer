@@ -35,7 +35,7 @@
 {% for key, msg in chat._messages.items() %}
     <div class="message {% if msg.get_sender_name() == 'Me' %}me{% endif %}">
     	<p>{{msg.timestamp.date()}} {{msg.timestamp.time()}}</p>
-        <p>{{msg.contents}}</p>
+        <p style="white-space: pre-wrap">{{msg.contents}}</p>
     </div>
 {% endfor %}
 </body>
