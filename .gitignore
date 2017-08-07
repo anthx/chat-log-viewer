@@ -100,5 +100,5 @@ ENV/
 # mypy
 .mypy_cache/
 *.csv
-chat_log.html
+chat_log*.html
 .idea
