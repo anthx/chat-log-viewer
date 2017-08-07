@@ -99,7 +99,7 @@ def viber(filename, viber_chats):
     with codecs.open(filename, "r", encoding='utf-8-sig') as chatfile:
         chat = csv.reader(chatfile, delimiter=",")
         for line in chat:
-            if len(line) > 1:
+            if len(line) > 0:
                 try:
                     timestamp = datetime_parser(line[0], line[1])
                     content = ""
@@ -109,14 +109,19 @@ def viber(filename, viber_chats):
                             content += ", "
                     m = Message(line[2], line[3], timestamp, content)
                     viber_chats.add_message(m)
-                except ValueError:
+                except (ValueError, IndexError):
                     # this must be a continuation of the previous message
                     rest_content = "\n"
+                    if len(line) == 0: print("here")
                     for i, message_fragment in enumerate(line):
                         rest_content += message_fragment
                         if i + 1 != len(line):
                             rest_content += ", "
                     viber_chats.get_most_recently_found_msg().contents += rest_content
+            elif len(line) == 0:
+                # this must be a continuation of the previous message
+                # and a para space
+                viber_chats.get_most_recently_found_msg().contents += "\n"
 
 
 def messenger(filename, messenger_chat):
