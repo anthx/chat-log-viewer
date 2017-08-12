@@ -63,9 +63,9 @@ class Message(object):
     def get_sender_number(self):
         return self._sender_number
 
-    # @property
-    # def timestamp(self):
-    #     return self._timestamp
+    @property
+    def time_date_sender(self):
+        return f"{self.timestamp.date()} {self.timestamp.time()}, {self._sender_name}"
 
     @property
     def contents(self):
@@ -108,6 +108,8 @@ def viber(filename, viber_chats):
                         if i + 1 != len(line[4:]):
                             content += ", "
                     m = Message(line[2], line[3], timestamp, content)
+                    if m.get_sender_name() == 'Me':
+                        m.is_user = True
                     viber_chats.add_message(m)
                 except (ValueError, IndexError):
                     # this must be a continuation of the previous message
@@ -125,7 +127,7 @@ def viber(filename, viber_chats):
 
 
 def messenger(filename, messenger_chat):
-    with codecs.open(filename, "r", encoding='ANSI') as chatfile:
+    with codecs.open(filename, "r") as chatfile:
         chat = csv.reader(chatfile, delimiter=",")
         # the Facebook chatlog parser includes headers.
         # Maybe I'll parse them later. For now, just skip over the first line
