@@ -23,5 +23,5 @@ Run the script with the parameter of a Viber or Facebook chat log CSV backup and
 ### Usage
 Pass the filename of the chat log as parameter 1 and either "viber" or "messenger" as parameter 2, sans quotes
 
-Needs Jinja2 and Python 3.6
+Needs Jinja2 and Python 3.6 and python-dateutil
 
