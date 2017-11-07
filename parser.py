@@ -37,7 +37,7 @@ class Message(object):
     """
     message_id = 0
 
-    def __init__(self, sender_name, sender_number, timestamp, contents):
+    def __init__(self, sender_name, sender_number, timestamp, contents) -> None:
         """
         Initialises a message with it's contents and metadata
         """
