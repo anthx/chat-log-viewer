@@ -95,6 +95,7 @@ class ChatLog(object):
         highest = sorted(keys)[-1]
         return self._messages[highest]
 
+
 def viber(filename, viber_chats):
     with codecs.open(filename, "r", encoding='utf-8-sig') as chatfile:
         chat = csv.reader(chatfile, delimiter=",")
@@ -124,6 +125,45 @@ def viber(filename, viber_chats):
                 # this must be a continuation of the previous message
                 # and a para space
                 viber_chats.get_most_recently_found_msg().contents += "\n"
+
+
+def kakao(filename, kakao_chats):
+    with codecs.open(filename, "r", encoding='utf-8-sig') as chatfile:
+        chat = csv.reader(chatfile, delimiter=",")
+        # the KakaoTalk chatlog export includes headers.
+        # Maybe I'll parse them later. For now, just skip over the first 2 lines
+        next(chatfile)
+        next(chatfile)
+        for line in chat:
+            if len(line) > 0:
+                try:
+                    timestamp = datetime_parser(line[0], line[1])
+                    content = ""
+                    # KakaoTalk separates the sender and message
+                    # in the 2nd csv value so we need to separate them specially
+                    sender, sep, message = line[4:].partition(" : ")
+
+                    # for i, message_fragment in enumerate(line[4:]):
+                    #     content += message_fragment
+                    #     if i + 1 != len(line[4:]):
+                    #         content += ", "
+                    m = Message(sender, 0, timestamp, message)
+                    if m.get_sender_name() == 'Me':
+                        m.is_user = True
+                    kakao_chats.add_message(m)
+                except (ValueError, IndexError):
+                    # this must be a continuation of the previous message
+                    rest_content = "\n"
+                    if len(line) == 0: print("here")
+                    for i, message_fragment in enumerate(line):
+                        rest_content += message_fragment
+                        if i + 1 != len(line):
+                            rest_content += ", "
+                    kakao_chats.get_most_recently_found_msg().contents += rest_content
+            elif len(line) == 0:
+                # this must be a continuation of the previous message
+                # and a para space
+                kakao_chats.get_most_recently_found_msg().contents += "\n"
 
 
 def messenger(filename, messenger_chat):
@@ -158,6 +198,8 @@ def main(argv):
         viber(filename, chat)
     if application == "messenger":
         messenger(filename, chat)
+    if application == "kakao":
+        kakao(filename, chat)
 
     try:
         template = env.get_template(f"{application}.html")
