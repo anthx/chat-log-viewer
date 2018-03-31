@@ -134,21 +134,23 @@ def kakao(filename, kakao_chats):
         # Maybe I'll parse them later. For now, just skip over the first 2 lines
         next(chatfile)
         next(chatfile)
+        next(chatfile)
+        next(chatfile)
         for line in chat:
-            if len(line) > 0:
+            if len(line) > 2:
                 try:
-                    timestamp = datetime_parser(line[0], line[1])
+                    timestamp = timestamp = parse(line[0] + line[1])
                     content = ""
                     # KakaoTalk separates the sender and message
                     # in the 2nd csv value so we need to separate them specially
-                    sender, sep, message = line[4:].partition(" : ")
+                    sender, sep, message = "".join(line[2:]).partition(" : ")
 
                     # for i, message_fragment in enumerate(line[4:]):
                     #     content += message_fragment
                     #     if i + 1 != len(line[4:]):
                     #         content += ", "
-                    m = Message(sender, 0, timestamp, message)
-                    if m.get_sender_name() == 'Me':
+                    m = Message(sender.strip(), 0, timestamp, message.strip())
+                    if m.get_sender_name() == 'you':
                         m.is_user = True
                     kakao_chats.add_message(m)
                 except (ValueError, IndexError):
