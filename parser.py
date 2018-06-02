@@ -65,7 +65,8 @@ class Message(object):
 
     @property
     def time_date_sender(self):
-        return f"{self.timestamp.date()} {self.timestamp.time()}, {self._sender_name}"
+        time_part: str = str(self.timestamp.time())[:5]
+        return f"{self.timestamp.date()} {time_part}, {self._sender_name}"
 
     @property
     def contents(self):
