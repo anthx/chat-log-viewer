@@ -84,6 +84,7 @@ class Message(object):
     def __repr__(self):
         return f"@{self.timestamp}, {self._sender_name} said, '{self.contents}'"
 
+
 class ChatLog(object):
     def __init__(self):
         self._messages = {}
@@ -95,6 +96,15 @@ class ChatLog(object):
         keys = self._messages.keys()
         highest = sorted(keys)[-1]
         return self._messages[highest]
+
+    def group_by_day(self):
+        """
+        Groups messages by day
+        :return: list
+        """
+        days: list = []
+        for msg in self._messages:
+            pass
 
 
 def viber(filename, viber_chats):
