@@ -97,7 +97,7 @@ class ChatLog(object):
         highest = sorted(keys)[-1]
         return self._messages[highest]
 
-    def group_by_day(self):
+    def group_by_day(self)  -> list:
         """
         Groups messages by day
         :return: list
