@@ -14,6 +14,11 @@ class MyTestCase(unittest.TestCase):
     dt4 = datetime.strptime("21/11/2018 16:33:25", "%d/%m/%Y %H:%M:%S")
     m4 = Message("Alice", "+61 555 555 5555", dt2, "Are you OK?")
 
+    dt5 = datetime.strptime("22/11/2018 16:33:25", "%d/%m/%Y %H:%M:%S")
+    m5 = Message("Bob", "+61 555 555 5555", dt2, "Hey there!")
+    dt6 = datetime.strptime("22/11/2018 16:33:25", "%d/%m/%Y %H:%M:%S")
+    m6 = Message("Alice", "+61 555 555 5555", dt2, "Hi Bob")
+
 
     def test_chat_log_1(self):
         chat = ChatLog()
@@ -55,9 +60,26 @@ class MyTestCase(unittest.TestCase):
         pass
 
     def test_day_grouping_one(self):
+        chat = ChatLog()
+        chat.add_message(MyTestCase.m1)
+        chat.add_message(MyTestCase.m2)
+        chat.add_message(MyTestCase.m3)
+        chat.add_message(MyTestCase.m4)
+        actual = chat.group_by_day()
+        self.assertEqual(1, len(actual), "should only be one day")
+        # they should all be the same day
         pass
 
     def test_two_days_grouping(self):
+        chat = ChatLog()
+        chat.add_message(MyTestCase.m1)
+        chat.add_message(MyTestCase.m2)
+        chat.add_message(MyTestCase.m3)
+        chat.add_message(MyTestCase.m4)
+        chat.add_message(MyTestCase.m5)
+        chat.add_message(MyTestCase.m6)
+        actual = chat.group_by_day()
+        self.assertEqual(2, len(actual), "should only be two days")
         pass
 
     def test_day_grouping_with_gap(self):
