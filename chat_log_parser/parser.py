@@ -8,6 +8,7 @@ from jinja2 import Environment, BaseLoader, FileSystemLoader, select_autoescape,
 from dateutil.parser import *
 # from dateutil.tz import *
 from datetime import *
+from typing import List
 
 # filename = "Viber_Chats.csv"
 
@@ -97,14 +98,20 @@ class ChatLog(object):
         highest = sorted(keys)[-1]
         return self._messages[highest]
 
-    def group_by_day(self)  -> list:
+    def group_by_day(self) -> list[list[Message]]:
         """
         Groups messages by day
         :return: list
         """
         days: list = []
-        for msg in self._messages:
-            pass
+        for i, msg in enumerate(self._messages.__len__()):
+            if i == 0:
+                days.append([])
+            elif msg.timestamp.date() == self._messages[i-1]:
+                pass
+            elif msg.timestamp.date() == self._messages[i-1]:
+                pass
+        return days
 
 
 def viber(filename, viber_chats):

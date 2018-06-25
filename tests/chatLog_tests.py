@@ -19,6 +19,11 @@ class MyTestCase(unittest.TestCase):
     dt6 = datetime.strptime("22/11/2018 16:33:25", "%d/%m/%Y %H:%M:%S")
     m6 = Message("Alice", "+61 555 555 5555", dt2, "Hi Bob")
 
+    dt7 = datetime.strptime("25/11/2018 16:33:25", "%d/%m/%Y %H:%M:%S")
+    m7 = Message("Bob", "+61 555 555 5555", dt2, "Hi Alice!")
+    dt8 = datetime.strptime("25/11/2018 16:33:25", "%d/%m/%Y %H:%M:%S")
+    m8 = Message("Alice", "+61 555 555 5555", dt2, "Hi Bob")
+
 
     def test_chat_log_1(self):
         chat = ChatLog()
@@ -68,6 +73,11 @@ class MyTestCase(unittest.TestCase):
         actual = chat.group_by_day()
         self.assertEqual(1, len(actual), "should only be one day")
         # they should all be the same day
+        expected = "21/11/2018"
+        self.assertEqual(expected, actual[0][0])
+        self.assertEqual(expected, actual[0][1])
+        self.assertEqual(expected, actual[0][2])
+        self.assertEqual(expected, actual[0][3])
         pass
 
     def test_two_days_grouping(self):
@@ -80,9 +90,31 @@ class MyTestCase(unittest.TestCase):
         chat.add_message(MyTestCase.m6)
         actual = chat.group_by_day()
         self.assertEqual(2, len(actual), "should only be two days")
+        # they should all be the same day
+        expected = "21/11/2018"
+        self.assertEqual(expected, actual[0][0])
+        self.assertEqual(expected, actual[0][1])
+        self.assertEqual(expected, actual[0][2])
+        self.assertEqual(expected, actual[0][3])
+
+        # they should all be the same day
+        expected1 = "22/11/2018"
+        self.assertEqual(expected, actual[1][0])
+        self.assertEqual(expected, actual[1][1])
         pass
 
     def test_day_grouping_with_gap(self):
+        chat = ChatLog()
+        chat.add_message(MyTestCase.m1)
+        chat.add_message(MyTestCase.m2)
+        chat.add_message(MyTestCase.m3)
+        chat.add_message(MyTestCase.m4)
+        chat.add_message(MyTestCase.m5)
+        chat.add_message(MyTestCase.m6)
+        chat.add_message(MyTestCase.m7)
+        chat.add_message(MyTestCase.m8)
+        actual = chat.group_by_day()
+        self.assertEqual(3, len(actual), "should be three days")
         pass
 
 if __name__ == '__main__':
