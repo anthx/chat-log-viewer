@@ -36,7 +36,7 @@ class Message(object):
     """
     Message class holds and individual message.
     """
-    message_id = 0
+    message_id = -1
 
     def __init__(self, sender_name, sender_number, timestamp, contents) -> None:
         """
@@ -98,19 +98,21 @@ class ChatLog(object):
         highest = sorted(keys)[-1]
         return self._messages[highest]
 
-    def group_by_day(self) -> list[list[Message]]:
+    def group_by_day(self) -> List[List[Message]]:
         """
         Groups messages by day
         :return: list
         """
         days: list = []
-        for i, msg in enumerate(self._messages.__len__()):
+        for i, msg in enumerate(self._messages.items()):
             if i == 0:
                 days.append([])
-            elif msg.timestamp.date() == self._messages[i-1]:
-                pass
-            elif msg.timestamp.date() == self._messages[i-1]:
-                pass
+                days[0].append(msg[1])
+            elif msg[1].timestamp.date() == self._messages[i-1].timestamp.date():
+                days[-1].append(msg[1])
+            elif msg[1].timestamp.date() != self._messages[i-1].timestamp.date():
+                days.append([])
+                days[-1].append(msg[1])
         return days
 
 

@@ -10,19 +10,19 @@ class MyTestCase(unittest.TestCase):
     dt2 = datetime.strptime("21/11/2018 16:32", "%d/%m/%Y %H:%M")
     m2 = Message("Bob", "+61 555 555 7777", dt2, "Hi Alice!")
     dt3 = datetime.strptime("21/11/2018 16:33:14", "%d/%m/%Y %H:%M:%S")
-    m3 = Message("Alice", "+61 555 555 5555", dt2, "How are you?")
+    m3 = Message("Alice", "+61 555 555 5555", dt3, "How are you?")
     dt4 = datetime.strptime("21/11/2018 16:33:25", "%d/%m/%Y %H:%M:%S")
-    m4 = Message("Alice", "+61 555 555 5555", dt2, "Are you OK?")
+    m4 = Message("Alice", "+61 555 555 5555", dt4, "Are you OK?")
 
-    dt5 = datetime.strptime("22/11/2018 16:33:25", "%d/%m/%Y %H:%M:%S")
-    m5 = Message("Bob", "+61 555 555 5555", dt2, "Hey there!")
-    dt6 = datetime.strptime("22/11/2018 16:33:25", "%d/%m/%Y %H:%M:%S")
-    m6 = Message("Alice", "+61 555 555 5555", dt2, "Hi Bob")
+    dt5 = datetime.strptime("22/11/2018 15:33:25", "%d/%m/%Y %H:%M:%S")
+    m5 = Message("Bob", "+61 555 555 5555", dt5, "Hey there!")
+    dt6 = datetime.strptime("22/11/2018 15:33:25", "%d/%m/%Y %H:%M:%S")
+    m6 = Message("Alice", "+61 555 555 5555", dt6, "Hi Bob")
 
-    dt7 = datetime.strptime("25/11/2018 16:33:25", "%d/%m/%Y %H:%M:%S")
-    m7 = Message("Bob", "+61 555 555 5555", dt2, "Hi Alice!")
-    dt8 = datetime.strptime("25/11/2018 16:33:25", "%d/%m/%Y %H:%M:%S")
-    m8 = Message("Alice", "+61 555 555 5555", dt2, "Hi Bob")
+    dt7 = datetime.strptime("25/11/2018 17:33:25", "%d/%m/%Y %H:%M:%S")
+    m7 = Message("Bob", "+61 555 555 5555", dt7, "Hi Alice!")
+    dt8 = datetime.strptime("25/11/2018 17:33:25", "%d/%m/%Y %H:%M:%S")
+    m8 = Message("Alice", "+61 555 555 5555", dt8, "Hi Bob")
 
 
     def test_chat_log_1(self):
@@ -46,8 +46,8 @@ class MyTestCase(unittest.TestCase):
         chat.add_message(MyTestCase.m1)
         chat.add_message(MyTestCase.m2)
         chat.add_message(MyTestCase.m3)
-        self.assertEqual(chat._messages[1].get_sender_name(), "Alice")
-        self.assertEqual(chat._messages[2].get_sender_name(), "Bob")
+        self.assertEqual(chat._messages[0].get_sender_name(), "Alice")
+        self.assertEqual(chat._messages[1].get_sender_name(), "Bob")
         pass
 
     def test_date_time_sender(self):
@@ -74,7 +74,7 @@ class MyTestCase(unittest.TestCase):
         self.assertEqual(1, len(actual), "should only be one day")
         # they should all be the same day
         expected = "21/11/2018"
-        self.assertEqual(expected, actual[0][0])
+        self.assertEqual(expected, actual[0][0].timestamp.date())
         self.assertEqual(expected, actual[0][1])
         self.assertEqual(expected, actual[0][2])
         self.assertEqual(expected, actual[0][3])
