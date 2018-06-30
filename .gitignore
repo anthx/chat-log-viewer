@@ -102,3 +102,6 @@ ENV/
 *.csv
 chat_log*.html
 .idea
+*.zip
+*.txt
+*.m4a
