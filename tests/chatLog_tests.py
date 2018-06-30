@@ -1,5 +1,6 @@
 import unittest
 from datetime import datetime
+from datetime import date
 
 from chat_log_parser.parser import ChatLog, Message
 
@@ -73,11 +74,11 @@ class MyTestCase(unittest.TestCase):
         actual = chat.group_by_day()
         self.assertEqual(1, len(actual), "should only be one day")
         # they should all be the same day
-        expected = "21/11/2018"
+        expected = date(2018, 11, 21)
         self.assertEqual(expected, actual[0][0].timestamp.date())
-        self.assertEqual(expected, actual[0][1])
-        self.assertEqual(expected, actual[0][2])
-        self.assertEqual(expected, actual[0][3])
+        self.assertEqual(expected, actual[0][1].timestamp.date())
+        self.assertEqual(expected, actual[0][2].timestamp.date())
+        self.assertEqual(expected, actual[0][3].timestamp.date())
         pass
 
     def test_two_days_grouping(self):
@@ -91,16 +92,16 @@ class MyTestCase(unittest.TestCase):
         actual = chat.group_by_day()
         self.assertEqual(2, len(actual), "should only be two days")
         # they should all be the same day
-        expected = "21/11/2018"
-        self.assertEqual(expected, actual[0][0])
-        self.assertEqual(expected, actual[0][1])
-        self.assertEqual(expected, actual[0][2])
-        self.assertEqual(expected, actual[0][3])
+        expected = date(2018, 11, 21)
+        self.assertEqual(expected, actual[0][0].timestamp.date())
+        self.assertEqual(expected, actual[0][1].timestamp.date())
+        self.assertEqual(expected, actual[0][2].timestamp.date())
+        self.assertEqual(expected, actual[0][3].timestamp.date())
 
         # they should all be the same day
-        expected1 = "22/11/2018"
-        self.assertEqual(expected, actual[1][0])
-        self.assertEqual(expected, actual[1][1])
+        expected1 = date(2018, 11, 22)
+        self.assertEqual(expected1, actual[1][0].timestamp.date())
+        self.assertEqual(expected1, actual[1][1].timestamp.date())
         pass
 
     def test_day_grouping_with_gap(self):
