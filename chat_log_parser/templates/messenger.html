@@ -16,7 +16,18 @@
 			padding: 5pt;
 			/*float: left;*/
     	}
-    	
+        .day {
+            border-top: solid blue 2px;
+            clear: both;
+            margin-top: 2em;
+            overflow: auto;
+        }
+
+        .day_label {
+            color: blue;
+            display: block;
+
+        }
     	.me {
     		float: right;
     		text-align: right;
@@ -36,20 +47,23 @@
 </head>
 <body>
 <h1>Number of messages: {{chat._messages|length}}</h1>
-{% for key, msg in chat._messages.items() %}
-	{% if key == 1%}
+{% for day in chat.group_by_day() %}
+<div class="day">
+    <div class="day_label">{{day[0].timestamp.date()}}</div>
+{% for msg in day %}
+	{% if loop.index == 1%}
 	<div class="bundle {% if msg.is_user %}me{% endif %}">
         <div class="metadata">At: {{msg.time_date_sender}} wrote:</div>
         <p class="message">{{msg.contents}}</p>
 	{% endif %}
 
-	{% if key > 1 and msg.time_date_sender == chat._messages[key-1].time_date_sender %}
+	{% if loop.index > 1 and msg.time_date_sender == chat._messages[loop.index-1].time_date_sender %}
         <div>
             <p class="message">{{msg.contents}}</p>
         </div>
     {% endif %}
 
-    {% if key > 1 and msg.time_date_sender != chat._messages[key-1].time_date_sender %}
+    {% if loop.index > 1 and msg.time_date_sender != chat._messages[loop.index-1].time_date_sender %}
     </div>
     <div class="bundle {% if msg.is_user %}me{% endif %}">
         <div class="metadata">At: {{msg.timestamp.date()}} {{msg.timestamp.time()}}, {{msg.get_sender_name()}} wrote:</div>
@@ -59,5 +73,7 @@
 
 {% endfor %}
     </div>
+</div>
+{% endfor %}
 </body>
 </html>
