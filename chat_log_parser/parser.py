@@ -210,8 +210,7 @@ def main(argv):
     filename = argv[0]
     application = argv[1]
     chat = ChatLog()
-    # print(locale.getpreferredencoding())
-    # print(filename)
+
     print("Loading chat...")
     start = time.time()
     if application == "viber":
