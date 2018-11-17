@@ -39,7 +39,6 @@ class Message(object):
     """
     Message class holds an individual message.
     """
-    # message_id = -1
 
     def __init__(self, sender_name, sender_number, timestamp, contents) -> None:
         """
@@ -50,8 +49,6 @@ class Message(object):
         self.timestamp = timestamp
         # self._contents = ""
         self.contents: str = contents
-        # Message.message_id += 1
-        # self._id = Message.message_id
         self._is_user = False
 
     @property
@@ -83,9 +80,6 @@ class Message(object):
         #     self._contents = self._contents + ", " + each
         self._contents = contents
 
-    # def get_id(self):
-    #     return self._id
-
     def __repr__(self):
         return f"@{self.timestamp}, {self._sender_name} said, '{self.contents}'"
 
@@ -98,8 +92,6 @@ class ChatLog(object):
         self._messages.append(message)
 
     def get_most_recently_found_msg(self) -> Message:
-        # keys = self._messages.keys()
-        # highest = self._messages[-1]
         return self._messages[-1]
 
     def group_by_day(self) -> List[List[Message]]:
@@ -241,9 +233,5 @@ def main(argv):
         print(f"Template not found: {err}")
 
 
-
-
-
 if __name__  == "__main__":
     main(sys.argv[1:])
-    # main()
