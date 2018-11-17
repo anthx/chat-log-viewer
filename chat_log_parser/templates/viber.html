@@ -58,9 +58,7 @@
 	{% endif %}
 
 	{% if loop.index > 1 and msg.time_date_sender == chat._messages[loop.index-2].time_date_sender %}
-        <div>
-            <p class="message">{{msg.contents}}</p>
-        </div>
+        <p class="message">{{msg.contents}}</p>
     {% endif %}
 
     {% if loop.index > 1 and msg.time_date_sender != chat._messages[loop.index-2].time_date_sender %}
