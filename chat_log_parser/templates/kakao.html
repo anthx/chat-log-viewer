@@ -59,13 +59,13 @@
         <p class="message">{{msg.contents}}</p>
 	{% endif %}
 
-	{% if loop.index > 1 and msg.time_date_sender == chat._messages[loop.index-1].time_date_sender %}
+	{% if loop.index > 1 and msg.time_date_sender == chat._messages[loop.index-2].time_date_sender %}
         <div>
             <p class="message">{{msg.contents}}</p>
         </div>
     {% endif %}
 
-    {% if loop.index > 1 and msg.time_date_sender != chat._messages[loop.index-1].time_date_sender %}
+    {% if loop.index > 1 and msg.time_date_sender != chat._messages[loop.index-2].time_date_sender %}
     </div>
     <div class="bundle {% if msg.is_user %}me{% endif %}">
         <div class="metadata">At: {{msg.timestamp.date()}} {{msg.timestamp.time()}}, {{msg.get_sender_name()}} wrote:</div>

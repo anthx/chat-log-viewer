@@ -10,6 +10,7 @@ from dateutil.parser import *
 from datetime import *
 from typing import List
 import os
+import time
 
 # filename = "Viber_Chats.csv"
 
@@ -36,9 +37,9 @@ def datetime_parser(this_date: str, this_time: str, date_mask="dd/mm/yyyy") -> d
 
 class Message(object):
     """
-    Message class holds and individual message.
+    Message class holds an individual message.
     """
-    message_id = -1
+    # message_id = -1
 
     def __init__(self, sender_name, sender_number, timestamp, contents) -> None:
         """
@@ -49,8 +50,9 @@ class Message(object):
         self.timestamp = timestamp
         # self._contents = ""
         self.contents: str = contents
-        Message.message_id += 1
-        self._id = Message.message_id
+        # Message.message_id += 1
+        # self._id = Message.message_id
+        self._is_user = False
 
     @property
     def is_user(self):
@@ -81,8 +83,8 @@ class Message(object):
         #     self._contents = self._contents + ", " + each
         self._contents = contents
 
-    def get_id(self):
-        return self._id
+    # def get_id(self):
+    #     return self._id
 
     def __repr__(self):
         return f"@{self.timestamp}, {self._sender_name} said, '{self.contents}'"
@@ -90,15 +92,15 @@ class Message(object):
 
 class ChatLog(object):
     def __init__(self):
-        self._messages = {}
+        self._messages = []
 
     def add_message(self, message):
-        self._messages[message.get_id()] = message
+        self._messages.append(message)
 
     def get_most_recently_found_msg(self) -> Message:
-        keys = self._messages.keys()
-        highest = sorted(keys)[-1]
-        return self._messages[highest]
+        # keys = self._messages.keys()
+        # highest = self._messages[-1]
+        return self._messages[-1]
 
     def group_by_day(self) -> List[List[Message]]:
         """
@@ -106,15 +108,15 @@ class ChatLog(object):
         :return: list
         """
         days: list = []
-        for i, msg in enumerate(self._messages.items()):
+        for i, msg in enumerate(self._messages):
             if i == 0:
                 days.append([])
-                days[0].append(msg[1])
-            elif msg[1].timestamp.date() == self._messages[i-1].timestamp.date():
-                days[-1].append(msg[1])
-            elif msg[1].timestamp.date() != self._messages[i-1].timestamp.date():
+                days[0].append(msg)
+            elif msg.timestamp.date() == self._messages[i-1].timestamp.date():
+                days[-1].append(msg)
+            elif msg.timestamp.date() != self._messages[i-1].timestamp.date():
                 days.append([])
-                days[-1].append(msg[1])
+                days[-1].append(msg)
         return days
 
 
@@ -218,19 +220,23 @@ def main(argv):
     chat = ChatLog()
     # print(locale.getpreferredencoding())
     # print(filename)
+    print("Loading chat...")
+    start = time.time()
     if application == "viber":
         viber(filename, chat)
     if application == "messenger":
         messenger(filename, chat)
     if application == "kakao":
         kakao(filename, chat)
-
+    parsed = time.time()
+    print(f"Loaded chat in {(time.time() - start) * 1000} ms \nRendering HTML")
     try:
         template = env.get_template(f"{application}.html")
         output = (template.render(chat=chat))
 
         with open(f"chat_log_{application}.html", 'wb') as f:
             f.write(output.encode("utf-8"))
+            print(f"Outputted in {(time.time() - parsed) * 1000} ms")
     except exceptions.TemplateNotFound as err:
         print(f"Template not found: {err}")
 
