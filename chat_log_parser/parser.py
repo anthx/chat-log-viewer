@@ -9,13 +9,15 @@ from dateutil.parser import *
 # from dateutil.tz import *
 from datetime import *
 from typing import List
+import os
 
 # filename = "Viber_Chats.csv"
 
 env = Environment(
-    loader=FileSystemLoader('templates'),
+    loader=FileSystemLoader(os.path.dirname(__file__)+'/templates'),
     autoescape=select_autoescape(['html', 'xml'])
 )
+
 
 def datetime_parser(this_date: str, this_time: str, date_mask="dd/mm/yyyy") -> datetime:
     """
@@ -229,8 +231,8 @@ def main(argv):
 
         with open(f"chat_log_{application}.html", 'wb') as f:
             f.write(output.encode("utf-8"))
-    except exceptions.TemplateNotFound:
-        print("Template not found")
+    except exceptions.TemplateNotFound as err:
+        print(f"Template not found: {err}")
 
 
 
