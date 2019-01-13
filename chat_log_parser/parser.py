@@ -46,8 +46,8 @@ class Message(object):
         """
         self._sender_name = sender_name
         self._sender_number = sender_number
-        self.timestamp = timestamp
-        # self._contents = ""
+        self.timestamp:datetime = timestamp
+        self._contents: str
         self.contents: str = contents
         self._is_user = False
 
@@ -85,11 +85,23 @@ class Message(object):
 
 
 class ChatLog(object):
-    def __init__(self):
-        self._messages = []
+    def __init__(self, app: str):
+        self._messages: List[Message] = []
+        self._participants = []
+        self._application: str = app
+
+    @property
+    def application(self):
+        return self._application
+
+    @application.setter
+    def application(self, app: str):
+        self._application = app
 
     def add_message(self, message):
         self._messages.append(message)
+        if message.get_sender_name() not in self._participants:
+            self._participants.append(message.get_sender_name())
 
     def get_most_recently_found_msg(self) -> Message:
         return self._messages[-1]
@@ -110,6 +122,17 @@ class ChatLog(object):
                 days.append([])
                 days[-1].append(msg)
         return days
+
+    def get_filename(self) -> str:
+        """
+        Generates a filename for this chat.
+        :return: str
+        """
+        participants = ", ".join(self._participants)
+        from_day = self._messages[0].timestamp.date()
+        to_day = self._messages[-1].timestamp.date()
+
+        return f"{self.application}_{participants}_{from_day}--{to_day}"
 
 
 def viber(filename, viber_chats):
@@ -209,7 +232,7 @@ def messenger(filename, messenger_chat):
 def main(argv):
     filename = argv[0]
     application = argv[1]
-    chat = ChatLog()
+    chat = ChatLog(application)
 
     print("Loading chat...")
     start = time.time()
@@ -225,7 +248,7 @@ def main(argv):
         template = env.get_template(f"{application}.html")
         output = (template.render(chat=chat))
 
-        with open(f"chat_log_{application}.html", 'wb') as f:
+        with open(f"{chat.get_filename()}.html", 'wb') as f:
             f.write(output.encode("utf-8"))
             print(f"Outputted in {(time.time() - parsed) * 1000} ms")
     except exceptions.TemplateNotFound as err:
